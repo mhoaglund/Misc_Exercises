@@ -2,6 +2,9 @@ class HundredPrisoners{
     constructor(settings){
         this.population = settings.population
         this.record = []
+        this.on_success = settings.success
+        this.on_failure = settings.failure
+        this.on_open = settings.on_open
         this.hydrate(this.population)
     }
     /**
@@ -19,12 +22,13 @@ class HundredPrisoners{
         console.log(this.prisoners)
     }
 
-    iterate(){
+    iterate(){ //TODO: offer configurable possibility of non-optimal solution path
         var success = false
         var should_continue = true
+        var current_prisoner = 0
         while (should_continue){
             for(var prisoner in this.prisoners){
-                var current_prisoner = this.prisoners[prisoner]
+                current_prisoner = this.prisoners[prisoner]
                 var latest_drawer = current_prisoner
                 var found = 0
                 var opened_drawers = 0
@@ -49,11 +53,13 @@ class HundredPrisoners{
             should_continue = false
         }
         if (success){
+            this.on_success()
             console.log("Successful Run.")
             this.record.push(1)
         }
 
         else{
+            this.on_failure(current_prisoner)
             console.log("Failed Run.")
             this.record.push(0)
         }
@@ -63,12 +69,14 @@ class HundredPrisoners{
     /**
      * A prisoner opens a drawer
      * @param {*} id the number of the drawer to open
-     * @param {*} drawers ...from this array of drawers
+     * @param {*} drawers ...from this array of drawers (why pass this?)
      * @param {*} recurrent whether or not to pass back a 'paginated' result so to speak
      */
     open_drawer(id, drawers, recurrent = true){
-        if(recurrent) return [id, drawers[id-1]]
-        else return drawers[id-1]
+        var result = drawers[id-1]
+        this.on_open([id, result])
+        if(recurrent) return [id, result]
+        else return result
     }
 
     evaluate(){ 
@@ -96,7 +104,9 @@ class HundredPrisoners{
 
 _settings = {
     "population": 100,
-
+    "success": function(){},
+    "failure": function(){},
+    "on_open": function(){}
 }
 
 var hundp1 = new HundredPrisoners(_settings);
