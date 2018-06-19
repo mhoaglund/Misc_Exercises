@@ -31,9 +31,9 @@ class HundredPrisoners{
     }
 
     /**
-     * Run the problem from beginning to success or failure.
+     * Run the problem from beginning to end.
      */
-    iterate(){ //TODO: offer configurable possibility of non-optimal solution path
+    iterate(){ //TODO: offer configurable solution method, e.g. random chance vs optimal vs whatever else
         var success = false
         var should_continue = true
         var current_prisoner = 0
@@ -64,7 +64,7 @@ class HundredPrisoners{
             should_continue = false
         }
         if (success){
-            this.on_success()
+            this.on_success(current_prisoner)
             console.log("Successful Run.")
             this.record.push(1)
         }
@@ -98,7 +98,7 @@ class HundredPrisoners{
         console.log(this.record)
         var counts = {}
         this.record.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
-        console.log(counts)
+        this.on_result(counts)
     }
 
     /**
@@ -116,24 +116,3 @@ class HundredPrisoners{
         return a;
     }
 }
-
-_settings = {
-    population: 100,
-    iterations: 100,
-    mode: "static",
-    success: function(report){
-
-    },
-    failure: function(report){
-
-    },
-    on_open: function(report){
-
-    },
-    on_result: function(report){
-
-    }
-}
-
-//TODO update the ctor call or leave it up to the user
-var hundp1 = new HundredPrisoners(_settings);
