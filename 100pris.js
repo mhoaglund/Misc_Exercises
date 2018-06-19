@@ -5,7 +5,15 @@ class HundredPrisoners{
         this.on_success = settings.success
         this.on_failure = settings.failure
         this.on_open = settings.on_open
+        this.on_result = settings.on_result
         this.hydrate(this.population)
+        if(settings.mode === "static"){ //Static iteration mode means run x number of iterations and finish.
+            for(var x = 0; x < 100; x++){
+                this.iterate()
+            }
+            this.evaluate() //TODO roll these together
+            this.on_result
+        }
     }
     /**
      * Build the array of drawers and assign numbers to prisoners
@@ -22,6 +30,9 @@ class HundredPrisoners{
         console.log(this.prisoners)
     }
 
+    /**
+     * Run the problem from beginning to success or failure.
+     */
     iterate(){ //TODO: offer configurable possibility of non-optimal solution path
         var success = false
         var should_continue = true
@@ -79,7 +90,11 @@ class HundredPrisoners{
         else return result
     }
 
-    evaluate(){ 
+    /**
+     * Evaluate the success rate of the elapsed iterations.
+     * @param {*} verbose whether or not to include detailed data
+     */
+    evaluate(verbose){ 
         console.log(this.record)
         var counts = {}
         this.record.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
@@ -103,16 +118,22 @@ class HundredPrisoners{
 }
 
 _settings = {
-    "population": 100,
-    "success": function(){},
-    "failure": function(){},
-    "on_open": function(){}
+    population: 100,
+    iterations: 100,
+    mode: "static",
+    success: function(report){
+
+    },
+    failure: function(report){
+
+    },
+    on_open: function(report){
+
+    },
+    on_result: function(report){
+
+    }
 }
 
+//TODO update the ctor call or leave it up to the user
 var hundp1 = new HundredPrisoners(_settings);
-hundp1.iterate();
-
-for(var x = 0; x < 100; x++){
-    hundp1.iterate()
-}
-hundp1.evaluate()
