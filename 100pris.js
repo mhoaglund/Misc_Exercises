@@ -1,3 +1,5 @@
+//TODO: allow users to pass in a condition for stopping iteration and an optional lambda for ticking it
+
 class HundredPrisoners{
     constructor(settings){
         this.population = settings.population
@@ -43,9 +45,11 @@ class HundredPrisoners{
                 var latest_drawer = current_prisoner
                 var found = 0
                 var opened_drawers = 0
+                var current_history = [latest_drawer]
             
                 while (found != current_prisoner && found != -1){
                     found = this.open_drawer(latest_drawer, this.drawers)[1]
+                    current_history.push(found)
                     latest_drawer = found
                     var opened_drawers = opened_drawers + 1
                     if (found == current_prisoner){
@@ -64,13 +68,13 @@ class HundredPrisoners{
             should_continue = false
         }
         if (success){
-            this.on_success(current_prisoner)
+            this.on_success(current_history)
             console.log("Successful Run.")
             this.record.push(1)
         }
 
         else{
-            this.on_failure(current_prisoner)
+            this.on_failure(current_history)
             console.log("Failed Run.")
             this.record.push(0)
         }
@@ -84,7 +88,7 @@ class HundredPrisoners{
      * @param {*} recurrent whether or not to pass back a 'paginated' result so to speak
      */
     open_drawer(id, drawers, recurrent = true){
-        var result = drawers[id-1]
+        var result = drawers[id]
         this.on_open([id, result])
         if(recurrent) return [id, result]
         else return result
@@ -95,7 +99,7 @@ class HundredPrisoners{
      * @param {*} verbose whether or not to include detailed data
      */
     evaluate(verbose){ 
-        console.log(this.record)
+        if(verbose) console.log(this.record)
         var counts = {}
         this.record.forEach(function(x) { counts[x] = (counts[x] || 0)+1; });
         this.on_result(counts)

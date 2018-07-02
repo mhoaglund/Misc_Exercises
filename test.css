@@ -5,19 +5,19 @@ body{
 }
 
 .successblock{
-    height: 40px;
-    width: 40px;
+    /* height: 40px;
+    width: 40px; */
     background-color: green;
 }
 
 .failblock{
-    height: 40px;
-    width: 40px;
+    /* height: 40px;
+    width: 40px; */
     background-color: red;
 }
 
 .openblock{
-    height: 40px;
-    width: 40px;
+    /* height: 40px;
+    width: 40px; */
     background-color: blue;
 }
