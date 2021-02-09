@@ -1,5 +1,5 @@
 #include "Arduino.h"
-#include "Morse.h"
+#include "Favg.h"
 
 Favg::Favg(int dim1, int dim2, int drift)
 {
