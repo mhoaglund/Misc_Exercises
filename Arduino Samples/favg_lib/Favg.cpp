@@ -63,7 +63,7 @@ void Favg::increment(int input[]){
         tempBaseline[k] = sum/_dim1;
         if(_ratelock && _elapsed > _dim1){
             int diff = tempBaseline[k] - frameAverage[k];
-            if(diff < driftRate){
+            if(abs(diff) < driftRate){
             frameAverage[k]=tempBaseline[k];
             } else {
                 if(diff > 0){
