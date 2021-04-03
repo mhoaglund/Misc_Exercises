@@ -9,12 +9,14 @@ class Favg
   private:
     int _dim1;
     int _dim2;
+    int _rate;
     int ** frames;
-    int _elapsed;
+    long _elapsed;
+    long _last;
     bool _ratelock;
 
   public:
-    Favg(int dim1, int dim2, int drift, bool limit);
+    Favg(int dim1, int dim2, int drift, int rate, bool limit);
     void init();
     //Array input must be size dim2.
     void increment(int input[]);

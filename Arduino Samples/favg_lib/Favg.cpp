@@ -1,11 +1,13 @@
 #include "Arduino.h"
 #include "Favg.h"
 
-Favg::Favg(int dim1, int dim2, int drift, bool limit)
+Favg::Favg(int dim1, int dim2, int drift, int rate, bool limit)
 {
     _dim1 = dim1;
     _dim2 = dim2;
+    _rate = rate;
     _ratelock = limit;
+
     driftRate = drift;
     frames = new int*[dim1];  
     for(int i=0;i<dim1;i++){    
@@ -17,6 +19,7 @@ Favg::Favg(int dim1, int dim2, int drift, bool limit)
 
 void Favg::init(){
     _elapsed = 0;
+    _last = 0;
     for (int i=0; i<_dim1; i++)
     {
         for (int j = 0; j<_dim2; j++)
@@ -34,9 +37,7 @@ void Favg::toggleRateLimit(bool setting){
 }
 
 void Favg::increment(int input[]){
-    if(_elapsed <= _dim1){
-        _elapsed++;
-    }
+    _elapsed++;
     //TODO: note about minimum array dimensions for header
     int endind = _dim1 - 2;
     for (int i=endind; i>-1; i--)
@@ -52,7 +53,15 @@ void Favg::increment(int input[]){
         frames[0][k] = input[k];
     }
     if(_elapsed < (_dim1)){
-        return;
+        return; //haven't got enough frames to make a good average yet.
+    }
+    //Framerate for avg update
+    if(_rate > 0){
+        if(_elapsed - _last > _rate){
+            _last = _elapsed;
+        } else {
+            return; //skip
+        }
     }
     int tempBaseline[_dim2]; //contains averages if we can make them
     for(int k=0; k<_dim2; k++){
